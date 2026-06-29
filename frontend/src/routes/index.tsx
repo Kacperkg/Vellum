@@ -1,14 +1,26 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { ping } from "../api/ping"
+import { useEffect, useState } from "react";
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute("/")({
+  component: Home,
+});
 
 function Home() {
-  return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
-    </div>
-  )
+
+  const [message, setMessage] = useState("Loading...")
+
+  useEffect(() => { 
+    async function load() { 
+      const data = await ping()
+      setMessage(data.message)
+    }
+
+    load()
+  }, [])
+
+  return <div>
+    <h1>VELLUM</h1>
+    <p>{message}</p>
+  </div>;
 }
