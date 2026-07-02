@@ -1,24 +1,18 @@
 package main
 
 import (
-	"net/http"
+	"log"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/kacperkg/vellum/internal/server"
 )
 
 func main() {
-    router := gin.Default()
+    app, err := server.New()
+    if err != nil {
+        log.Fatal(err)
+    }
 
-    router.Use(cors.Default())
-
-
-    router.GET("/ping", func(c *gin.Context){
-        c.JSON(http.StatusOK, gin.H{
-            "message": "pong from docker",
-        })
-    })
-    if err := router.Run(":8080"); err != nil {
-        panic(err)
+    if err := app.Run(); err != nil {
+        log.Fatal(err)
     }
 }

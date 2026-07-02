@@ -16,5 +16,22 @@ services:
       - ./frontend:/app
       - frontend_node_modules:/app/node_modules
 
+  postgres:
+    image: postgres:17
+    container_name: vellum-postgres
+
+    environment:
+      POSTGRES_USER: vellum
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vellum
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
 volumes:
   frontend_node_modules:
+  postgres_data:

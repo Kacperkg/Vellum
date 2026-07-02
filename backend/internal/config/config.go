@@ -1,0 +1,45 @@
+package config
+
+import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
+type Config struct {
+	Port string
+
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBSSLMode  string
+}
+
+func Load() *Config {
+	if err := godotenv.Load(); err != nil{
+		log.Println("No .env file found")
+	}
+
+	return &Config{
+		Port: required("PORT"),
+		DBHost: required("DB_HOST"),
+		DBPort: required("DB_PORT"),
+		DBUser: required("DB_USER"),
+		DBPassword: required("DB_PASSWORD"),
+		DBName: required("DB_NAME"),
+		DBSSLMode: required("DB_SSLMODE"),
+	}
+}
+
+func required(key string) string {
+	value := os.Getenv(key)
+
+	if value == "" {
+		log.Fatalf("%s is required", key)
+	}
+
+	return value
+}
