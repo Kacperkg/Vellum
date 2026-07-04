@@ -16,3 +16,11 @@ const (
 	Income TransactionType = "income"
 	Expense TransactionType = "expense"
 )
+
+type NumberFormat string
+
+const (
+	CommaDecimal NumberFormat = "comma_decimal" // 1,234.56
+	DotDecimal   NumberFormat = "dot_decimal"   // 1.234,56
+	Apostrophe   NumberFormat = "apostrophe"    // 1'234.56
+)

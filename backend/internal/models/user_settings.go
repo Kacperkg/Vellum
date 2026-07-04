@@ -11,6 +11,6 @@ type UserSettings struct {
 
     Currency string
     DateFormat string
-    NumberFormat string
+    NumberFormat NumberFormat `gorm:"not null"`
     WeekStartsOn string
 }
