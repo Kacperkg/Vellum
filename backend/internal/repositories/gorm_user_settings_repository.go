@@ -28,3 +28,7 @@ func (r *GormUserSettingsRepository) FindByUserID(userID uuid.UUID) (*models.Use
 func (r *GormUserSettingsRepository) Update(settings *models.UserSettings) error {
 	return r.db.Save(settings).Error
 }
+
+func (r *GormUserSettingsRepository) Create(settings *models.UserSettings) error {
+	return r.db.Create(settings).Error
+}

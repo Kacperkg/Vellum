@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/kacperkg/vellum/internal/models"
 	"gorm.io/gorm"
@@ -24,6 +26,9 @@ func (r *GormUserRepository) FindByID(id uuid.UUID) (*models.User, error) {
 	var user models.User
 	err := r.db.First(&user, "id = ?", id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &user, nil

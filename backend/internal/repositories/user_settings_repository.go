@@ -8,4 +8,5 @@ import (
 type UserSettingsRepository interface {
 	FindByUserID(userID uuid.UUID) (*models.UserSettings, error)
 	Update(settings *models.UserSettings) error
-}
+	Create(settings *models.UserSettings) error
+}	

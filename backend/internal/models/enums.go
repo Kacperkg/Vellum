@@ -24,3 +24,26 @@ const (
 	DotDecimal   NumberFormat = "dot_decimal"   // 1.234,56
 	Apostrophe   NumberFormat = "apostrophe"    // 1'234.56
 )
+
+type Currency string
+
+const (
+	GBP Currency = "GBP"
+	USD Currency = "USD"
+	EUR Currency = "EUR"
+)
+
+type DateFormat string
+
+const (
+	DDMMYYYY DateFormat = "DD/MM/YYYY"
+	MMDDYYYY DateFormat = "MM/DD/YYYY"
+	YYYYMMDD DateFormat = "YYYY-MM-DD"
+)
+
+type WeekStartsOn string
+
+const (
+	Monday WeekStartsOn = "Monday"
+	Sunday WeekStartsOn = "Sunday"
+)
