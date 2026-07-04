@@ -12,6 +12,8 @@ type Transaction struct {
 	Name string `gorm:"not null"`
 	Amount float64 `gorm:"not null"`
 
+	AccountID uuid.UUID `gorm:"type:uuid;not null"`
+
 	CategoryID uuid.UUID `gorm:"type:uuid;not null"`
 	Category   Category  `gorm:"foreignKey:CategoryID"`
 

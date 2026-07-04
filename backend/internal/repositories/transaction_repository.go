@@ -16,4 +16,5 @@ type TransactionRepository interface {
 	FindByCategoryID(userId, categoryID uuid.UUID) ([]*models.Transaction, error)
 	FindByDateRange(userID uuid.UUID, startDate, endDate time.Time) ([]*models.Transaction, error)
 	FindByFrequency(userID uuid.UUID, frequency models.Frequency) ([]*models.Transaction, error)
+	FindByAccountID(accountID uuid.UUID) ([]*models.Transaction, error)
 }
