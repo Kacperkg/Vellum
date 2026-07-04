@@ -16,6 +16,10 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBSSLMode  string
+
+	JWTSecret string
+	JWTExpiry string
+
 }
 
 func Load() *Config {
@@ -31,6 +35,8 @@ func Load() *Config {
 		DBPassword: required("DB_PASSWORD"),
 		DBName: required("DB_NAME"),
 		DBSSLMode: required("DB_SSLMODE"),
+		JWTSecret: required("JWT_SECRET"),
+		JWTExpiry: required("JWT_EXPIRY"),
 	}
 }
 
