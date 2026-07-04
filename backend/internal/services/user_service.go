@@ -2,7 +2,9 @@ package services
 
 import (
 	"errors"
+	"time"
 
+	"github.com/kacperkg/vellum/internal/auth"
 	"github.com/kacperkg/vellum/internal/dto"
 	"github.com/kacperkg/vellum/internal/models"
 	"github.com/kacperkg/vellum/internal/repositories"
@@ -12,24 +14,29 @@ import (
 type UserService struct {
 	userRepository repositories.UserRepository
 	userSettingsRepository repositories.UserSettingsRepository
+
+	jwtSecret string
+	jwtExpiry time.Duration
 }
 
-func NewUserService(userRepository repositories.UserRepository, userSettingsRepository repositories.UserSettingsRepository) *UserService {
+func NewUserService(userRepository repositories.UserRepository, userSettingsRepository repositories.UserSettingsRepository, jwtSecret string, jwtExpiry time.Duration) *UserService {
 	return &UserService{
 		userRepository: userRepository,
 		userSettingsRepository: userSettingsRepository,
+		jwtSecret: jwtSecret,
+		jwtExpiry: jwtExpiry,
 	}
 }
 
-func (s *UserService) Register(req dto.RegisterRequest) error {
+func (s *UserService) Register(req dto.RegisterRequest) (*dto.AuthResponse, error) {
 	// Check if email already exists
 	user, err := s.userRepository.FindByEmail(req.Email)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if user != nil {
-		return errors.New("user with this email already exists")
+		return nil, errors.New("user with this email already exists")
 	}
 
 	// Hash the password
@@ -39,7 +46,7 @@ func (s *UserService) Register(req dto.RegisterRequest) error {
 	)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	user = &models.User{
@@ -51,7 +58,7 @@ func (s *UserService) Register(req dto.RegisterRequest) error {
 
 	err = s.userRepository.Create(user)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create default user settings
@@ -65,8 +72,46 @@ func (s *UserService) Register(req dto.RegisterRequest) error {
 
 	err = s.userSettingsRepository.Create(defaultSettings)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	// Generate token
+	token, err := auth.GenerateToken(user.ID, s.jwtSecret, s.jwtExpiry)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.AuthResponse{
+	AccessToken: token,
+}, nil
+}
+
+
+
+func (s *UserService) Login(req dto.LoginRequest) (*dto.AuthResponse, error) {
+	// Check if user exists
+	user, err := s.userRepository.FindByEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	// Check if password is correct
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
+	if err != nil {
+		return nil, errors.New("invalid email or password")
+	}
+
+	// Generate token
+	token, err := auth.GenerateToken(user.ID, s.jwtSecret, s.jwtExpiry)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.AuthResponse{
+		AccessToken: token,
+	}, nil
 }
