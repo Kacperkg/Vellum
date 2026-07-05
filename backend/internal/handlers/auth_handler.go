@@ -20,7 +20,7 @@ func NewAuthHandler(userService *services.UserService) *AuthHandler {
 
 func (h *AuthHandler) Register(c *gin.Context) {
 
-	var req dto.RegisterRequest	
+	var req dto.RegisterRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
