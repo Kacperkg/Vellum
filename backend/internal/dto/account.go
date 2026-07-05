@@ -1,5 +1,9 @@
 package dto
 
+import (
+	"github.com/google/uuid"
+)
+
 type CreateAccountRequest struct {
 	Name string
 }
@@ -9,6 +13,6 @@ type UpdateAccountRequest struct {
 }
 
 type AccountResponse struct {
-	ID   string
+	ID   uuid.UUID
 	Name string
 }
