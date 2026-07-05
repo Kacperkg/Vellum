@@ -8,7 +8,7 @@ type Goal struct {
 	UserID uuid.UUID `gorm:"type:uuid;not null"`
 	User   User      `gorm:"foreignKey:UserID"`
 
-	GoalName            string  `gorm:"not null"`
+	Name                string  `gorm:"not null"`
 	TargetAmount        float64 `gorm:"not null"`
 	SavedAmount         float64 `gorm:"not null"`
 	MonthlyContribution float64 `gorm:"not null"`

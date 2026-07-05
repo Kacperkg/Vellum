@@ -154,6 +154,8 @@ internal/
 
 ## Data Model
 
+![Vellum Backend ERD](doc/ERD.png)
+
 The backend defines models for:
 
 - Users
