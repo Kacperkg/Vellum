@@ -16,6 +16,17 @@ for password hashing, and JWTs for authentication.
 - Docker Compose
 - Air
 
+## Architecture
+
+![Vellum Backend UML Component Diagram](doc/layered-uml-component-diagram.png)
+
+The backend follows a layered structure:
+
+- Routes and middleware handle HTTP entry points and authentication.
+- Handlers parse requests and return JSON responses.
+- Services contain business logic, validation, and ownership checks.
+- Repositories are the only layer that talks to PostgreSQL through GORM.
+
 ## Getting Started
 
 From the repository root:
@@ -179,6 +190,7 @@ docker compose logs -f backend
 - Transaction routes
 - Budget routes
 - Goal routes
+- Subscription routes
 - User settings routes
 - Dashboard and analytics routes
 - CSV export
