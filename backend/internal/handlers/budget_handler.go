@@ -103,3 +103,23 @@ func (h *BudgetHandler) ListByUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *BudgetHandler) Delete(c *gin.Context) {
+	budgetID, ok := getIDParam(c)
+	if !ok {
+		return
+	}
+
+	userID, ok := getUserID(c)
+	if !ok {
+		return
+	}
+
+	err := h.budgetService.Delete(userID, budgetID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
