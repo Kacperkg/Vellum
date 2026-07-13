@@ -31,6 +31,7 @@ func (h *BudgetHandler) Create(c *gin.Context) {
 	userIDValue, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
 	}
 
 	userID, ok := userIDValue.(uuid.UUID)
@@ -46,4 +47,94 @@ func (h *BudgetHandler) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, response)
+}
+
+func (h *BudgetHandler) Update(c *gin.Context) {
+	budgetIDParam := c.Param("id")
+
+	budgetID, err := uuid.Parse(budgetIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "budget not found"})
+		return
+	}
+
+	var req dto.UpdateBudgetRequest
+
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := userIDValue.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	response, err := h.budgetService.Update(userID, budgetID, req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *BudgetHandler) FindByID(c *gin.Context) {
+	budgetIDParam := c.Param("id")
+
+	budgetID, err := uuid.Parse(budgetIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "budget not found"})
+		return
+	}
+
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := userIDValue.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	response, err := h.budgetService.FindByID(userID, budgetID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *BudgetHandler) ListByUser(c *gin.Context) {
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := userIDValue.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	response, err := h.budgetService.FindByUserID(userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }
