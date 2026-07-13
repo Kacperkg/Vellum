@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/kacperkg/vellum/internal/dto"
 	"github.com/kacperkg/vellum/internal/services"
 )
@@ -28,15 +27,8 @@ func (h *BudgetHandler) Create(c *gin.Context) {
 		return
 	}
 
-	userIDValue, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDValue.(uuid.UUID)
+	userID, ok := getUserID(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
@@ -50,31 +42,21 @@ func (h *BudgetHandler) Create(c *gin.Context) {
 }
 
 func (h *BudgetHandler) Update(c *gin.Context) {
-	budgetIDParam := c.Param("id")
-
-	budgetID, err := uuid.Parse(budgetIDParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "budget not found"})
+	budgetID, ok := getIDParam(c)
+	if !ok {
 		return
 	}
 
 	var req dto.UpdateBudgetRequest
 
-	err = c.ShouldBindJSON(&req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userIDValue, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDValue.(uuid.UUID)
+	userID, ok := getUserID(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
@@ -88,23 +70,13 @@ func (h *BudgetHandler) Update(c *gin.Context) {
 }
 
 func (h *BudgetHandler) FindByID(c *gin.Context) {
-	budgetIDParam := c.Param("id")
-
-	budgetID, err := uuid.Parse(budgetIDParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "budget not found"})
-		return
-	}
-
-	userIDValue, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDValue.(uuid.UUID)
+	budgetID, ok := getIDParam(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := getUserID(c)
+	if !ok {
 		return
 	}
 
@@ -118,15 +90,8 @@ func (h *BudgetHandler) FindByID(c *gin.Context) {
 }
 
 func (h *BudgetHandler) ListByUser(c *gin.Context) {
-	userIDValue, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDValue.(uuid.UUID)
+	userID, ok := getUserID(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
 
