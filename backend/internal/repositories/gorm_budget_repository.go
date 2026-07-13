@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/kacperkg/vellum/internal/models"
 	"gorm.io/gorm"
@@ -24,6 +26,9 @@ func (r *GormBudgetRepository) FindByID(id uuid.UUID) (*models.Budget, error) {
 	var budget models.Budget
 	err := r.db.First(&budget, "id = ?", id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &budget, nil

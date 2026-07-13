@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,6 +27,9 @@ func (r *GormTransactionRepository) FindByID(id uuid.UUID) (*models.Transaction,
 	var transaction models.Transaction
 	err := r.db.First(&transaction, "id = ?", id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &transaction, nil

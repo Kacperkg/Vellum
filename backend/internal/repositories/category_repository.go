@@ -7,5 +7,5 @@ import (
 
 type CategoryRepository interface {
 	FindByID(id uuid.UUID) (*models.Category, error)
-	FindAll() ([]*models.Category, error)
+	ListAll() ([]*models.Category, error)
 }

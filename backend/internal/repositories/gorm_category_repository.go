@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/kacperkg/vellum/internal/models"
 	"gorm.io/gorm"
@@ -20,12 +22,15 @@ func (r *GormCategoryRepository) FindByID(id uuid.UUID) (*models.Category, error
 	var category models.Category
 	err := r.db.First(&category, "id = ?", id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &category, nil
 }
 
-func (r *GormCategoryRepository) FindAll() ([]*models.Category, error) {
+func (r *GormCategoryRepository) ListAll() ([]*models.Category, error) {
 	var categories []*models.Category
 	err := r.db.Find(&categories).Error
 	if err != nil {
